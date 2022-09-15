@@ -2,10 +2,14 @@ package com.ll.exam.app10.app.home.controller;
 
 import com.ll.exam.app10.app.member.entity.Member;
 import com.ll.exam.app10.app.member.service.MemberService;
+import com.ll.exam.app10.app.security.dto.MemberContext;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.security.Principal;
 
@@ -16,39 +20,23 @@ public class HomeController {
 
     @GetMapping("/")
     public String showMain(Principal principal, Model model) {
-        Member loginedMember = null;
-        String loginedMemberProfileImgUrl = null;
-
-        if (principal != null && principal.getName() != null) {
-            loginedMember = memberService.getMemberByUsername(principal.getName());
-        }
-
-        if (loginedMember != null) {
-            loginedMemberProfileImgUrl = loginedMember.getProfileImgUrl();
-        }
-
-        model.addAttribute("loginedMember", loginedMember);
-        model.addAttribute("loginedMemberProfileImgUrl", loginedMemberProfileImgUrl);
-
         return "home/main";
     }
 
     @GetMapping("/about")
     public String showAbout(Principal principal, Model model) {
-        Member loginedMember = null;
-        String loginedMemberProfileImgUrl = null;
-
-        if (principal != null && principal.getName() != null) {
-            loginedMember = memberService.getMemberByUsername(principal.getName());
-        }
-
-        if (loginedMember != null) {
-            loginedMemberProfileImgUrl = loginedMember.getProfileImgUrl();
-        }
-
-        model.addAttribute("loginedMember", loginedMember);
-        model.addAttribute("loginedMemberProfileImgUrl", loginedMemberProfileImgUrl);
-
         return "home/about";
+    }
+
+    @GetMapping("/currentUserOrigin")
+    @ResponseBody
+    public Principal currentUserOrigin(Principal principal) {
+        return principal;
+    }
+
+    @GetMapping("/currentUser")
+    @ResponseBody
+    public MemberContext currentUser(@AuthenticationPrincipal MemberContext memberContext) {
+        return memberContext;
     }
 }
